@@ -19,7 +19,7 @@ public class TantivyService : IDisposable
     private bool _ready;
 
     private const int    ServerPort    = 7777;
-    private const string ServerBase    = $"http://127.0.0.1:{ServerPort}";
+    private static readonly string ServerBase = $"http://127.0.0.1:{ServerPort}";
     private const string IndexName     = "otzaria";
 
     public bool IsReady => _ready;
