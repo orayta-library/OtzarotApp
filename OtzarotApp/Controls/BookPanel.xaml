@@ -1,0 +1,217 @@
+<UserControl
+    x:Class="OtzarotApp.Controls.BookPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OtzarotApp.Controls"
+    xmlns:vm="using:OtzarotApp.ViewModels"
+    xmlns:models="using:OtzarotApp.Models"
+    FlowDirection="RightToLeft"
+    MinWidth="280" MinHeight="200">
+
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- כותרת חלון + כפתורי שליטה                        -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,0,1"
+                CornerRadius="8,8,0,0"
+                x:Name="TitleBar"
+                PointerPressed="TitleBar_PointerPressed"
+                PointerMoved="TitleBar_PointerMoved"
+                PointerReleased="TitleBar_PointerReleased">
+            <Grid Padding="8,6" ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
+
+                <!-- כפתורי חלון (שמאל — כמו Windows) -->
+                <Button Grid.Column="0" x:Name="CloseBtn"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        ToolTipService.ToolTip="סגור"
+                        Click="Close_Click">
+                    <FontIcon Glyph="&#xE711;" FontSize="11"
+                              Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
+                </Button>
+                <Button Grid.Column="1" x:Name="MinimizeBtn"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        ToolTipService.ToolTip="צמצם"
+                        Click="Minimize_Click">
+                    <FontIcon Glyph="&#xE921;" FontSize="11"/>
+                </Button>
+
+                <!-- שם ספר + כותרת מיקום (לחיצה פותחת ניווט) -->
+                <Button Grid.Column="2"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Right"
+                        Click="LocationBreadcrumb_Click"
+                        Padding="4,0">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock x:Name="BookTitleText" FontWeight="SemiBold"
+                                   FontSize="13" VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" MaxWidth="200"/>
+                        <FontIcon Glyph="&#xE76C;" FontSize="10" Opacity="0.6"
+                                  VerticalAlignment="Center"/>
+                        <TextBlock x:Name="HeRefText" FontSize="12" Opacity="0.7"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" MaxWidth="150"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- כפתור מפרשים -->
+                <Button Grid.Column="3"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Padding="6,4"
+                        Click="Commentary_Click"
+                        ToolTipService.ToolTip="מפרשים">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE90A;" FontSize="13"/>
+                        <TextBlock Text="מפרשים" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- הגדל/הקטן גופן -->
+                <Button Grid.Column="4"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        Click="DecreaseFontSize_Click"
+                        ToolTipService.ToolTip="הקטן גופן (Ctrl+-)">
+                    <FontIcon Glyph="&#xE8E7;" FontSize="12"/>
+                </Button>
+                <Button Grid.Column="5"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        Click="IncreaseFontSize_Click"
+                        ToolTipService.ToolTip="הגדל גופן (Ctrl++)">
+                    <FontIcon Glyph="&#xE8E8;" FontSize="12"/>
+                </Button>
+
+                <!-- כפתור הרחב/צמצם -->
+                <Button Grid.Column="6"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        Click="Maximize_Click"
+                        ToolTipService.ToolTip="הרחב">
+                    <FontIcon x:Name="MaximizeIcon" Glyph="&#xE922;" FontSize="11"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- תוכן ספר — WebView2                               -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1" Grid.Column="0">
+            <!-- טעינה -->
+            <ProgressRing x:Name="LoadingRing"
+                          IsActive="False"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Width="48" Height="48"/>
+
+            <!-- WebView לתצוגת HTML -->
+            <WebView2 x:Name="ContentWebView"
+                      NavigationCompleted="WebView_NavigationCompleted"/>
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- פאנל TOC — נשלף מימין                             -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <Border Grid.Row="1" Grid.Column="1"
+                x:Name="TocPanel"
+                Width="240"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1,0,0,0"
+                Visibility="Collapsed">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" Padding="8,6" ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0" Text="תוכן עניינים"
+                               FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Style="{StaticResource SubtleButtonStyle}"
+                            Width="24" Height="24" Padding="0"
+                            Click="CloseToc_Click">
+                        <FontIcon Glyph="&#xE711;" FontSize="10"/>
+                    </Button>
+                </Grid>
+                <TreeView Grid.Row="1" x:Name="TocTreeView"
+                          ItemsSource="{x:Bind ViewModel.TocRoots, Mode=OneWay}"
+                          ItemInvoked="TocEntry_Invoked">
+                    <TreeView.ItemTemplate>
+                        <DataTemplate x:DataType="models:TocEntry">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind Title}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Grid>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- Popup מפרשים                                      -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <Popup x:Name="CommentaryPopup"
+               Grid.Row="0" Grid.Column="0"
+               IsLightDismissEnabled="True">
+            <Border Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8"
+                    Width="280" MaxHeight="400"
+                    Padding="4">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="מפרשים ופירושים"
+                               FontWeight="SemiBold" Padding="8,8,8,4"/>
+                    <ListView Grid.Row="1" x:Name="CommentaryList"
+                              ItemsSource="{x:Bind ViewModel.Commentaries, Mode=OneWay}"
+                              ItemClick="Commentary_ItemClick"
+                              IsItemClickEnabled="True">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Commentary">
+                                <Grid ColumnDefinitions="*,Auto" Padding="4,6">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{x:Bind DisplayName}"
+                                               TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind LinkType}"
+                                               FontSize="11" Opacity="0.6"
+                                               VerticalAlignment="Center"
+                                               Margin="8,0,0,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+        </Popup>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- שורה תחתונה: כפתור "טען עוד" + resize handle     -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <Border Grid.Row="2" Grid.ColumnSpan="2"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0" Padding="4,2"
+                CornerRadius="0,0,8,8">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <Button Grid.Column="0" x:Name="LoadMoreBtn"
+                        Content="טען עוד..."
+                        Style="{StaticResource SubtleButtonStyle}"
+                        FontSize="12" Padding="6,2"
+                        Click="LoadMore_Click"/>
+                <!-- Resize handle בפינה ימנית תחתונה -->
+                <Border Grid.Column="2"
+                        Width="16" Height="16"
+                        Cursor="SizeNWSE"
+                        PointerPressed="ResizeHandle_PointerPressed"
+                        PointerMoved="ResizeHandle_PointerMoved"
+                        PointerReleased="ResizeHandle_PointerReleased">
+                    <FontIcon Glyph="&#xE922;" FontSize="10" Opacity="0.4"
+                              FlowDirection="LeftToRight"/>
+                </Border>
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>
