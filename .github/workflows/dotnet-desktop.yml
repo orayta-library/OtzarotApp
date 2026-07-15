@@ -27,3 +27,9 @@ jobs:
 
     - name: Build
       run: msbuild OtzarotApp/OtzarotApp.csproj /p:Platform=x64 /p:Configuration=Release /t:Build /nologo
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: OtzarotApp
+        path: OtzarotApp/bin/x64/Release/net9.0-windows10.0.22621.0/
