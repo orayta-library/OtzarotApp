@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using OtzarotApp.Services;
 using OtzarotApp.ViewModels;
 using OtzarotApp.Views;
@@ -17,6 +18,9 @@ public partial class App : Application
 
     public App()
     {
+        // אתחול Windows App SDK כ-unpackaged app
+        Microsoft.WindowsAppRuntime.Bootstrap.Initialize(0x00010006);
+
         InitializeComponent();
         Services = ConfigureServices();
     }
