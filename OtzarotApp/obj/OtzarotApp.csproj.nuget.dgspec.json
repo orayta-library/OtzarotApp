@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj": {}
+    "D:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj": {}
   },
   "projects": {
-    "E:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj": {
+    "D:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj",
+        "projectUniqueName": "D:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj",
         "projectName": "OtzarotApp",
-        "projectPath": "E:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj",
+        "projectPath": "D:\\ff\\OtzarotApp\\OtzarotApp\\OtzarotApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "E:\\ff\\OtzarotApp\\OtzarotApp\\obj\\",
+        "outputPath": "D:\\ff\\OtzarotApp\\OtzarotApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
