@@ -203,7 +203,6 @@
                 <!-- Resize handle בפינה ימנית תחתונה -->
                 <Border Grid.Column="2"
                         Width="16" Height="16"
-                        Cursor="SizeNWSE"
                         PointerPressed="ResizeHandle_PointerPressed"
                         PointerMoved="ResizeHandle_PointerMoved"
                         PointerReleased="ResizeHandle_PointerReleased">

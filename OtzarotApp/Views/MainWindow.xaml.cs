@@ -25,6 +25,15 @@ public sealed partial class MainWindow : Window
         _searchVm   = App.Services.GetRequired<SearchViewModel>();
         _settingsVm = App.Services.GetRequired<SettingsViewModel>();
 
+        // הגדר גודל מינימלי לחלון
+        var appWindow = GetAppWindow();
+        appWindow.Resize(new Windows.Graphics.SizeInt32(1024, 700));
+        if (appWindow.Presenter is OverlappedPresenter overlapped)
+        {
+            overlapped.IsMinimizable = true;
+            overlapped.IsMaximizable = true;
+        }
+
         // חבר Canvas ל-ViewModel
         BookCanvas.MainViewModel = _vm;
 
@@ -37,6 +46,15 @@ public sealed partial class MainWindow : Window
 
         // אתחול אסינכרוני
         _ = InitAsync();
+
+        // אכוף גודל מינימלי
+        SizeChanged += (_, _) =>
+        {
+            var win = GetAppWindow();
+            var s = win.Size;
+            if (s.Width < 800 || s.Height < 600)
+                win.Resize(new Windows.Graphics.SizeInt32(Math.Max(s.Width, 800), Math.Max(s.Height, 600)));
+        };
     }
 
     // ─── אתחול ──────────────────────────────────────────────
