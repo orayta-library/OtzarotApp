@@ -27,12 +27,25 @@ jobs:
 
     - name: Create test certificate
       run: |
-        $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=Developer" -KeyUsage DigitalSignature -FriendlyName "OtzarotApp" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
-        $pwd = ConvertTo-SecureString -String "test" -Force -AsPlainText
-        Export-PfxCertificate -Cert $cert -FilePath OtzarotApp/OtzarotApp_test.pfx -Password $pwd
+        $cert = New-SelfSignedCertificate `
+          -Type CodeSigningCert `
+          -Subject "CN=Developer" `
+          -KeyUsage DigitalSignature `
+          -FriendlyName "OtzarotApp Test" `
+          -CertStoreLocation "Cert:\CurrentUser\My" `
+          -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+        $thumb = $cert.Thumbprint
+        echo "CERT_THUMBPRINT=$thumb" >> $env:GITHUB_ENV
 
     - name: Build MSIX
-      run: msbuild OtzarotApp/OtzarotApp.csproj /p:Platform=x64 /p:Configuration=Release /p:GenerateAppxPackageOnBuild=true /p:PackageCertificateKeyFile=OtzarotApp_test.pfx /p:PackageCertificatePassword=test /nologo
+      run: |
+        msbuild OtzarotApp/OtzarotApp.csproj `
+          /p:Platform=x64 `
+          /p:Configuration=Release `
+          /p:GenerateAppxPackageOnBuild=true `
+          /p:PackageCertificateThumbprint=$env:CERT_THUMBPRINT `
+          /p:AppxPackageSigningEnabled=true `
+          /nologo
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
