@@ -118,16 +118,16 @@ public partial class BookPanelViewModel : ObservableObject
     private void RebuildHtml()
     {
         var sb = new System.Text.StringBuilder();
-        sb.Append($"""
+        sb.Append($$"""
             <html dir="rtl"><head>
             <meta charset="utf-8">
             <style>
-              body {{ font-family: '{FontFamily}', David, serif;
-                      font-size: {FontSize}px; line-height: 1.8;
-                      margin: 16px 20px; color: #1a1a1a; direction: rtl; }}
-              p {{ margin: 0 0 4px; }}
-              h1,h2,h3,h4 {{ color: #3d2b1f; margin: 12px 0 6px; }}
-              .he-ref {{ color: #888; font-size: 0.75em; margin-left: 8px; }}
+              body { font-family: '{{FontFamily}}', David, serif;
+                      font-size: {{FontSize}}px; line-height: 1.8;
+                      margin: 16px 20px; color: #1a1a1a; direction: rtl; }
+              p { margin: 0 0 4px; }
+              h1,h2,h3,h4 { color: #3d2b1f; margin: 12px 0 6px; }
+              .he-ref { color: #888; font-size: 0.75em; margin-left: 8px; }
             </style></head><body>
             """);
 

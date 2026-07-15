@@ -25,6 +25,9 @@ public sealed partial class MainWindow : Window
         _searchVm   = App.Services.GetRequired<SearchViewModel>();
         _settingsVm = App.Services.GetRequired<SettingsViewModel>();
 
+        // Mica backdrop
+        SystemBackdrop = new Microsoft.UI.Xaml.Media.MicaBackdrop();
+
         // הגדר גודל מינימלי לחלון
         var appWindow = GetAppWindow();
         appWindow.Resize(new Windows.Graphics.SizeInt32(1024, 700));
