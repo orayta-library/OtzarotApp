@@ -265,7 +265,6 @@
                 <!-- Resize handle פינה שמאל תחתונה -->
                 <Border Grid.Column="0"
                         Width="18" Height="18"
-                        Cursor="SizeNorthwestSoutheast"
                         PointerPressed="ResizeHandle_PointerPressed"
                         PointerMoved="ResizeHandle_PointerMoved"
                         PointerReleased="ResizeHandle_PointerReleased"
