@@ -31,6 +31,9 @@ public partial class SettingsViewModel : ObservableObject
 
     partial void OnStatusMessageChanged(string value) => OnPropertyChanged(nameof(HasStatusMessage));
 
+    public string FontSizeText => ((int)FontSize).ToString();
+    partial void OnFontSizeChanged(double value) => OnPropertyChanged(nameof(FontSizeText));
+
     public List<string> Themes { get; } = ["Default", "Light", "Dark"];
 
     public SettingsViewModel(SettingsService settings, DatabaseService db,

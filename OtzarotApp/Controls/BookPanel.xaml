@@ -13,11 +13,7 @@
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="2"
             CornerRadius="8"
-            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-            Translation="0,0,32">
-        <Border.Shadow>
-            <ThemeShadow/>
-        </Border.Shadow>
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
 
     <Grid RowDefinitions="Auto,*,Auto">
 
@@ -221,11 +217,9 @@
                 </Grid>
             </Border>
 
-            <!-- Popup מפרשים — עוגן בפינה ימנית עליונה -->
+            <!-- Popup מפרשים -->
             <Popup x:Name="CommentaryPopup"
-                   IsLightDismissEnabled="True"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Top">
+                   IsLightDismissEnabled="True">
                 <Border Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1" CornerRadius="8"
