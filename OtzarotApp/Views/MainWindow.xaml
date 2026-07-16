@@ -126,7 +126,7 @@
         <!-- ══ פאנל הגדרות צד (ימין) ══ -->
         <Border Grid.Row="1" Grid.Column="1"
                 x:Name="SettingsPanel"
-                Width="380"
+                Width="520"
                 Background="{ThemeResource LayerFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1,0,0,0"
