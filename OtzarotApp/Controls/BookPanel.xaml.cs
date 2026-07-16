@@ -341,28 +341,16 @@ public sealed partial class BookPanel : UserControl
 
     // ─── cursors לגבולות resize ───────────────────────────────
     private void TopBottomEdge_PointerEntered(object s, PointerRoutedEventArgs e)
-    {
-        if (s is UIElement el)
-            el.ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeNorthSouth);
-    }
+        => ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeNorthSouth);
 
     private void LeftRightEdge_PointerEntered(object s, PointerRoutedEventArgs e)
-    {
-        if (s is UIElement el)
-            el.ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast);
-    }
+        => ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast);
 
     private void ResizeHandle_PointerEntered(object s, PointerRoutedEventArgs e)
-    {
-        if (s is UIElement el)
-            el.ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeNorthwestSoutheast);
-    }
+        => ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeNorthwestSoutheast);
 
     private void Edge_PointerExited(object s, PointerRoutedEventArgs e)
-    {
-        if (s is UIElement el)
-            el.ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
-    }
+        => ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
 
     // ─── עזרי מיקום ─────────────────────────────────────────
     private void ApplyPosition()
