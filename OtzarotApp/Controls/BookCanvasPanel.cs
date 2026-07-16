@@ -63,7 +63,6 @@ public class BookCanvasPanel : Canvas
             if (_panelMap.ContainsKey(vm)) continue;
 
             var panel = new BookPanel();
-            panel.Initialize(vm);
 
             // מיקום ראשוני — cascade בהפרש 30px
             int idx = _panelMap.Count;
@@ -103,8 +102,10 @@ public class BookCanvasPanel : Canvas
                     await _vm.OpenCommentaryAsync(p.ViewModel, c);
             };
 
+            // הוסף ל-visual tree לפני Initialize כדי ש-WebView2 יוכל לאתחל
             Children.Add(panel);
             _panelMap[vm] = panel;
+            panel.Initialize(vm);
             
             // העבר את החלון החדש קדימה
             BringPanelToFront(panel);

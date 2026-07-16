@@ -146,7 +146,7 @@ public sealed partial class MainWindow : Window
     private void SearchBox_SuggestionChosen(AutoSuggestBox sender,
         AutoSuggestBoxSuggestionChosenEventArgs args)
     {
-        // ה-ItemsSource הוא List<string> של כותרות
+        // ItemsSource הוא List<string> של כותרות — מצא את ה-BookSuggestion המתאים
         if (args.SelectedItem is string title)
         {
             var s = _vm.Suggestions.FirstOrDefault(x => x.Title == title);
@@ -158,6 +158,18 @@ public sealed partial class MainWindow : Window
     private void SearchBox_QuerySubmitted(AutoSuggestBox sender,
         AutoSuggestBoxQuerySubmittedEventArgs args)
     {
+        // אם המשתמש בחר הצעה מהרשימה — פתח אותה
+        if (args.ChosenSuggestion is string chosenTitle)
+        {
+            var s = _vm.Suggestions.FirstOrDefault(x => x.Title == chosenTitle);
+            if (s is not null)
+            {
+                _ = _vm.SelectSuggestionCommand.ExecuteAsync(s);
+                return;
+            }
+        }
+
+        // אם הוקלד טקסט חופשי — פתח דיאלוג איתור ספרים (לא חיפוש תוכן)
         if (!string.IsNullOrWhiteSpace(args.QueryText))
         {
             var s = _vm.Suggestions.FirstOrDefault(x =>
@@ -165,11 +177,7 @@ public sealed partial class MainWindow : Window
             if (s is not null)
                 _ = _vm.SelectSuggestionCommand.ExecuteAsync(s);
             else
-            {
-                // פתח דיאלוג חיפוש עם הטקסט
-                _searchVm.Query = args.QueryText;
-                OpenSearch_Click(sender, null!);
-            }
+                OpenBook_Click(sender, null!);
         }
     }
 

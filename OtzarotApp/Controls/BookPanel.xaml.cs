@@ -55,13 +55,31 @@ public sealed partial class BookPanel : UserControl
         BookTitleText.Text = vm.Title;
         HeRefText.Text     = vm.CurrentHeRef;
 
+        // טעינת HTML נדחית ל-Loaded כדי שה-WebView2 יהיה ב-visual tree
         if (!string.IsNullOrEmpty(vm.HtmlContent))
-            LoadHtml(vm.HtmlContent);
+        {
+            Loaded += OnFirstLoaded;
+        }
+    }
+
+    private void OnFirstLoaded(object sender, RoutedEventArgs e)
+    {
+        Loaded -= OnFirstLoaded;
+        if (ViewModel is not null && !string.IsNullOrEmpty(ViewModel.HtmlContent))
+            LoadHtml(ViewModel.HtmlContent);
     }
 
     // ─── HTML ────────────────────────────────────────────────
     private async void LoadHtml(string html)
     {
+        // וודא שאנחנו על ה-UI thread
+        if (DispatcherQueue is null) return;
+        if (!DispatcherQueue.HasThreadAccess)
+        {
+            DispatcherQueue.TryEnqueue(() => LoadHtml(html));
+            return;
+        }
+
         await ContentWebView.EnsureCoreWebView2Async();
         ContentWebView.CoreWebView2.NavigateToString(html);
     }
