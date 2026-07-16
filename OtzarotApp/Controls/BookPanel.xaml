@@ -8,6 +8,10 @@
     FlowDirection="RightToLeft"
     MinWidth="280" MinHeight="200">
 
+    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
 
         <!-- ══════════════════════════════════════════════════ -->
@@ -16,23 +20,24 @@
         <Border Grid.Row="0" Grid.ColumnSpan="2"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="0,0,0,1"
+                BorderThickness="1"
                 CornerRadius="8,8,0,0"
                 x:Name="TitleBar"
                 PointerPressed="TitleBar_PointerPressed"
                 PointerMoved="TitleBar_PointerMoved"
                 PointerReleased="TitleBar_PointerReleased">
-            <Grid Padding="8,6" ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
+            <Grid Padding="8,6" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto">
 
-                <!-- כפתורי חלון (שמאל — כמו Windows) -->
-                <Button Grid.Column="0" x:Name="CloseBtn"
+                <!-- כפתור הרחב/צמצם (ימין) -->
+                <Button Grid.Column="0"
                         Style="{StaticResource SubtleButtonStyle}"
                         Width="28" Height="28" Padding="0"
-                        ToolTipService.ToolTip="סגור"
-                        Click="Close_Click">
-                    <FontIcon Glyph="&#xE711;" FontSize="11"
-                              Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
+                        Click="Maximize_Click"
+                        ToolTipService.ToolTip="הרחב">
+                    <FontIcon x:Name="MaximizeIcon" Glyph="&#xE922;" FontSize="11"/>
                 </Button>
+
+                <!-- כפתור צמצם -->
                 <Button Grid.Column="1" x:Name="MinimizeBtn"
                         Style="{StaticResource SubtleButtonStyle}"
                         Width="28" Height="28" Padding="0"
@@ -41,8 +46,18 @@
                     <FontIcon Glyph="&#xE921;" FontSize="11"/>
                 </Button>
 
+                <!-- כפתור סגירה (שמאל) -->
+                <Button Grid.Column="2" x:Name="CloseBtn"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        ToolTipService.ToolTip="סגור"
+                        Click="Close_Click">
+                    <FontIcon Glyph="&#xE711;" FontSize="11"
+                              Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
+                </Button>
+
                 <!-- שם ספר + כותרת מיקום (לחיצה פותחת ניווט) -->
-                <Button Grid.Column="2"
+                <Button Grid.Column="3"
                         Style="{StaticResource SubtleButtonStyle}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Right"
@@ -60,8 +75,24 @@
                     </StackPanel>
                 </Button>
 
+                <!-- הגדל/הקטן גופן -->
+                <Button Grid.Column="4"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        Click="IncreaseFontSize_Click"
+                        ToolTipService.ToolTip="הגדל גופן (Ctrl++)">
+                    <FontIcon Glyph="&#xE8E8;" FontSize="12"/>
+                </Button>
+                <Button Grid.Column="5"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Width="28" Height="28" Padding="0"
+                        Click="DecreaseFontSize_Click"
+                        ToolTipService.ToolTip="הקטן גופן (Ctrl+-)">
+                    <FontIcon Glyph="&#xE8E7;" FontSize="12"/>
+                </Button>
+
                 <!-- כפתור מפרשים -->
-                <Button Grid.Column="3"
+                <Button Grid.Column="6"
                         Style="{StaticResource SubtleButtonStyle}"
                         Padding="6,4"
                         Click="Commentary_Click"
@@ -70,31 +101,6 @@
                         <FontIcon Glyph="&#xE90A;" FontSize="13"/>
                         <TextBlock Text="מפרשים" FontSize="12"/>
                     </StackPanel>
-                </Button>
-
-                <!-- הגדל/הקטן גופן -->
-                <Button Grid.Column="4"
-                        Style="{StaticResource SubtleButtonStyle}"
-                        Width="28" Height="28" Padding="0"
-                        Click="DecreaseFontSize_Click"
-                        ToolTipService.ToolTip="הקטן גופן (Ctrl+-)">
-                    <FontIcon Glyph="&#xE8E7;" FontSize="12"/>
-                </Button>
-                <Button Grid.Column="5"
-                        Style="{StaticResource SubtleButtonStyle}"
-                        Width="28" Height="28" Padding="0"
-                        Click="IncreaseFontSize_Click"
-                        ToolTipService.ToolTip="הגדל גופן (Ctrl++)">
-                    <FontIcon Glyph="&#xE8E8;" FontSize="12"/>
-                </Button>
-
-                <!-- כפתור הרחב/צמצם -->
-                <Button Grid.Column="6"
-                        Style="{StaticResource SubtleButtonStyle}"
-                        Width="28" Height="28" Padding="0"
-                        Click="Maximize_Click"
-                        ToolTipService.ToolTip="הרחב">
-                    <FontIcon x:Name="MaximizeIcon" Glyph="&#xE922;" FontSize="11"/>
                 </Button>
             </Grid>
         </Border>
@@ -213,4 +219,5 @@
         </Border>
 
     </Grid>
+    </Border>
 </UserControl>

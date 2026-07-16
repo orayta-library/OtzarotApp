@@ -18,8 +18,19 @@
                 BorderThickness="0,0,0,1">
             <Grid Padding="8,4" ColumnDefinitions="Auto,*,320,*,Auto">
 
-                <!-- תפריט -->
-                <MenuBar Grid.Column="0" FlowDirection="RightToLeft">
+                <!-- כפתור הגדרות (ימין) -->
+                <Button Grid.Column="0"
+                        Click="Settings_Click"
+                        Padding="8,4"
+                        Margin="4,0"
+                        ToolTipService.ToolTip="הגדרות"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <FontIcon Glyph="&#xE713;" FontSize="16"/>
+                </Button>
+
+                <!-- תפריט (שמאל) -->
+                <MenuBar Grid.Column="4" FlowDirection="RightToLeft">
                     <MenuBarItem Title="עיון">
                         <MenuFlyoutItem Text="פתח ספר..." Click="OpenBook_Click">
                             <MenuFlyoutItem.KeyboardAccelerators>
@@ -81,17 +92,6 @@
                     TextChanged="SearchBox_TextChanged"
                     QuerySubmitted="SearchBox_QuerySubmitted"
                     SuggestionChosen="SearchBox_SuggestionChosen"/>
-
-                <!-- כפתור הגדרות -->
-                <Button Grid.Column="4"
-                        Click="Settings_Click"
-                        Padding="8,4"
-                        Margin="4,0"
-                        ToolTipService.ToolTip="הגדרות"
-                        Background="Transparent"
-                        BorderThickness="0">
-                    <FontIcon Glyph="&#xE713;" FontSize="16"/>
-                </Button>
             </Grid>
         </Border>
 

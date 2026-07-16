@@ -103,13 +103,13 @@ public sealed partial class BookPanel : UserControl
     {
         if (_minimized)
         {
-            Height = _savedHeight;
+            _panelSize = new Size(_panelSize.Width, _savedHeight);
             _minimized = false;
         }
         else
         {
-            _savedHeight = ActualHeight;
-            Height = 42; // רק כותרת
+            _savedHeight = _panelSize.Height;
+            _panelSize = new Size(_panelSize.Width, 42); // רק כותרת
             _minimized = true;
         }
         ApplySize();

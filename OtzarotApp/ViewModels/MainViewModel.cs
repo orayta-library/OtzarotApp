@@ -126,7 +126,7 @@ public partial class MainViewModel : ObservableObject
         {
             results = await _tantivy.SuggestAsync(query, 10);
         }
-        else
+        else if (_db.IsOpen)
         {
             // fallback: חיפוש ישיר ב-DB
             var books = _db.SearchBooks(query, 10);
@@ -134,8 +134,13 @@ public partial class MainViewModel : ObservableObject
             {
                 BookId = b.Id,
                 Title  = b.DisplayName,
-                HeRef  = string.Empty
+                HeRef  = string.Empty,
+                LineIndex = 0
             }).ToList();
+        }
+        else
+        {
+            results = [];
         }
 
         if (ct.IsCancellationRequested) return;
