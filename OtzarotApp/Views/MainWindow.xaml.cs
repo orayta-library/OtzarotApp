@@ -380,7 +380,7 @@ public sealed partial class MainWindow : Window
 
         // כפתור שמירה
         var saveBtn = new Button { Content = "שמור הגדרות גופן", Style = (Style)Application.Current.Resources["AccentButtonStyle"], HorizontalAlignment = HorizontalAlignment.Left };
-        saveBtn.Click += async (s, e) => await _settingsVm.SaveFontSettingsCommand.ExecuteAsync(null);
+        saveBtn.Click += (s, e) => _settingsVm.SaveFontSettingsCommand.Execute(null);
         stack.Children.Add(saveBtn);
 
         border.Child = stack;
