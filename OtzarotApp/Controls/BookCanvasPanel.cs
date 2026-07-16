@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using OtzarotApp.Models;
 using OtzarotApp.ViewModels;
 using Windows.Foundation;
@@ -14,6 +15,7 @@ public class BookCanvasPanel : Canvas
 {
     private MainViewModel? _vm;
     private readonly Dictionary<BookPanelViewModel, BookPanel> _panelMap = [];
+    private BookPanel? _activePanel;
 
     public MainViewModel? MainViewModel
     {
@@ -35,6 +37,8 @@ public class BookCanvasPanel : Canvas
     {
         if (e.PropertyName == nameof(ViewModels.MainViewModel.Panels))
             DispatcherQueue.TryEnqueue(SyncPanels);
+        else if (e.PropertyName == nameof(ViewModels.MainViewModel.ActivePanel))
+            DispatcherQueue.TryEnqueue(UpdateActivePanel);
     }
 
     private void SyncPanels()
@@ -82,6 +86,14 @@ public class BookCanvasPanel : Canvas
                 panel.SetInitialPosition(new Point(x, y), new Size(620, 520));
             }
 
+            // הוסף event כשלוחצים על החלון להעביר אותו קדימה
+            panel.PointerPressed += (s, e) =>
+            {
+                BringPanelToFront(panel);
+                if (_vm is not null)
+                    _vm.ActivePanel = vm;
+            };
+
             panel.CloseRequested += p =>
                 _vm.ClosePanelCommand.Execute(p.ViewModel);
 
@@ -93,6 +105,34 @@ public class BookCanvasPanel : Canvas
 
             Children.Add(panel);
             _panelMap[vm] = panel;
+            
+            // העבר את החלון החדש קדימה
+            BringPanelToFront(panel);
+        }
+    }
+
+    private void BringPanelToFront(BookPanel panel)
+    {
+        if (_activePanel == panel) return;
+
+        // הסר highlight מהחלון הקודם
+        if (_activePanel is not null)
+        {
+            Canvas.SetZIndex(_activePanel, 0);
+            _activePanel.Opacity = 0.95;
+        }
+
+        // הוסף highlight לחלון הנוכחי
+        Canvas.SetZIndex(panel, 100);
+        panel.Opacity = 1.0;
+        _activePanel = panel;
+    }
+
+    private void UpdateActivePanel()
+    {
+        if (_vm?.ActivePanel is not null && _panelMap.TryGetValue(_vm.ActivePanel, out var panel))
+        {
+            BringPanelToFront(panel);
         }
     }
 }

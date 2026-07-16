@@ -13,6 +13,36 @@
             CornerRadius="8"
             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
+    
+        <!-- Resize handles -->
+        <!-- Top edge -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Height="4" VerticalAlignment="Top"
+                Background="Transparent" Cursor="SizeNS"
+                PointerPressed="TopEdge_PointerPressed"
+                PointerMoved="TopEdge_PointerMoved"
+                PointerReleased="Edge_PointerReleased"
+                Panel.ZIndex="10"/>
+        <!-- Bottom edge -->
+        <Border Grid.Row="2" Grid.ColumnSpan="2" Height="4" VerticalAlignment="Bottom"
+                Background="Transparent" Cursor="SizeNS"
+                PointerPressed="BottomEdge_PointerPressed"
+                PointerMoved="BottomEdge_PointerMoved"
+                PointerReleased="Edge_PointerReleased"
+                Panel.ZIndex="10"/>
+        <!-- Left edge -->
+        <Border Grid.Row="0" Grid.RowSpan="3" Width="4" HorizontalAlignment="Left"
+                Background="Transparent" Cursor="SizeWE"
+                PointerPressed="LeftEdge_PointerPressed"
+                PointerMoved="LeftEdge_PointerMoved"
+                PointerReleased="Edge_PointerReleased"
+                Panel.ZIndex="10"/>
+        <!-- Right edge -->
+        <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Width="4" HorizontalAlignment="Right"
+                Background="Transparent" Cursor="SizeWE"
+                PointerPressed="RightEdge_PointerPressed"
+                PointerMoved="RightEdge_PointerMoved"
+                PointerReleased="Edge_PointerReleased"
+                Panel.ZIndex="10"/>
 
         <!-- ══════════════════════════════════════════════════ -->
         <!-- כותרת חלון + כפתורי שליטה                        -->
@@ -209,6 +239,7 @@
                 <!-- Resize handle בפינה ימנית תחתונה -->
                 <Border Grid.Column="2"
                         Width="16" Height="16"
+                        Cursor="SizeNWSE"
                         PointerPressed="ResizeHandle_PointerPressed"
                         PointerMoved="ResizeHandle_PointerMoved"
                         PointerReleased="ResizeHandle_PointerReleased">

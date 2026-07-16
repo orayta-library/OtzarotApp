@@ -90,35 +90,60 @@ public class TantivyService : IDisposable
     {
         var exe = _settings.TantivyPath;
         if (string.IsNullOrEmpty(exe) || !File.Exists(exe)) return false;
+        if (!File.Exists(dbPath))
+        {
+            progress?.Report($"שגיאה: קובץ DB לא נמצא: {dbPath}");
+            return false;
+        }
 
         try
         {
             StopServer();
+            
+            // צור תיקיית אינדקס אם לא קיימת
+            Directory.CreateDirectory(indexPath);
+            
+            progress?.Report($"מתחיל בניית אינדקס...");
+            progress?.Report($"מקור: {dbPath}");
+            progress?.Report($"יעד: {indexPath}");
+            
+            // בניית אינדקס עם JOIN לספרים כדי להוסיף title
             var psi = new ProcessStartInfo
             {
                 FileName = exe,
-                Arguments = $"index --source sqlite --db \"{dbPath}\" --table line --output \"{indexPath}\"",
+                Arguments = $"index --source sqlite --db \"{dbPath}\" " +
+                           $"--query \"SELECT l.id, l.bookId, l.lineIndex, l.content, l.heRef, b.title " +
+                           $"FROM line l JOIN book b ON l.bookId = b.id\" " +
+                           $"--id-field id --book-id-field bookId --line-index-field lineIndex " +
+                           $"--content-field content --he-ref-field heRef --title-field title " +
+                           $"--output \"{indexPath}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
             using var p = new Process { StartInfo = psi, EnableRaisingEvents = true };
-            p.OutputDataReceived += (_, e) => { if (e.Data != null) progress?.Report(e.Data); };
-            p.ErrorDataReceived  += (_, e) => { if (e.Data != null) progress?.Report(e.Data); };
+            p.OutputDataReceived += (_, e) => { if (e.Data != null) progress?.Report($"[OUT] {e.Data}"); };
+            p.ErrorDataReceived  += (_, e) => { if (e.Data != null) progress?.Report($"[ERR] {e.Data}"); };
             p.Start();
             p.BeginOutputReadLine();
             p.BeginErrorReadLine();
             await p.WaitForExitAsync();
+            
+            progress?.Report($"תהליך הסתיים עם קוד: {p.ExitCode}");
+            
             if (p.ExitCode == 0)
             {
                 _settings.IndexPath = indexPath;
+                progress?.Report("בניית האינדקס הושלמה בהצלחה!");
                 return true;
             }
+            progress?.Report($"שגיאה: תהליך נכשל עם קוד {p.ExitCode}");
             return false;
         }
-        catch
+        catch (Exception ex)
         {
+            progress?.Report($"שגיאה: {ex.Message}");
             return false;
         }
     }
@@ -168,25 +193,16 @@ public class TantivyService : IDisposable
         if (!_ready || string.IsNullOrWhiteSpace(query))
             return [];
 
-        var parms = new SearchParameters
-        {
-            Query = query,
-            Limit = limit,
-            Fuzzy = true,
-            FuzzyDistance = 1
-        };
-
-        // חיפוש בשדה כותרת בלבד
+        // חיפוש בשדה כותרת בלבד - מגביל לספרים ייחודיים
         try
         {
             var body = new
             {
                 index = IndexName,
-                query,
-                fields = new[] { "title", "heRef" },
-                limit,
-                fuzzy = true,
-                fuzzy_distance = 1,
+                query = $"title:{query}*",  // חיפוש רק בשדה title
+                fields = new[] { "title" },
+                limit = limit * 5,  // מביא יותר כדי לקבץ אחר כך
+                fuzzy = false,
                 summary_only = true
             };
             var json    = JsonSerializer.Serialize(body);
@@ -201,7 +217,7 @@ public class TantivyService : IDisposable
             if (result?.Hits is null) return [];
 
             // קבץ לפי ספר — מחזיר הצעה לכל ספר ייחודי
-            return result.Hits
+            var suggestions = result.Hits
                 .GroupBy(h => h.BookId)
                 .Select(g =>
                 {
@@ -210,12 +226,14 @@ public class TantivyService : IDisposable
                     {
                         BookId    = first.BookId,
                         Title     = first.Title,
-                        HeRef     = first.HeRef,
-                        LineIndex = first.LineIndex
+                        HeRef     = string.Empty,  // לא צריך HeRef בהשלמה
+                        LineIndex = 0
                     };
                 })
                 .Take(limit)
                 .ToList();
+
+            return suggestions;
         }
         catch
         {

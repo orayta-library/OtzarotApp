@@ -120,15 +120,16 @@ public partial class MainViewModel : ObservableObject
         await Task.Delay(200, ct); // debounce
         if (ct.IsCancellationRequested) return;
 
-        List<BookSuggestion> results;
+        List<BookSuggestion> results = [];
 
         if (IsServerReady)
         {
             results = await _tantivy.SuggestAsync(query, 10);
         }
-        else if (_db.IsOpen)
+        
+        // fallback: חיפוש ישיר ב-DB רק אם Tantivy לא החזיר תוצאות
+        if (results.Count == 0 && _db.IsOpen)
         {
-            // fallback: חיפוש ישיר ב-DB
             var books = _db.SearchBooks(query, 10);
             results = books.Select(b => new BookSuggestion
             {
@@ -137,10 +138,6 @@ public partial class MainViewModel : ObservableObject
                 HeRef  = string.Empty,
                 LineIndex = 0
             }).ToList();
-        }
-        else
-        {
-            results = [];
         }
 
         if (ct.IsCancellationRequested) return;

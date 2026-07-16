@@ -31,6 +31,9 @@ public sealed partial class BookPanel : UserControl
     private bool  _isResizing;
     private Point _resizeStart;
     private Size  _resizeStartSize;
+    private Point _positionStart;
+    private enum ResizeEdge { None, Top, Bottom, Left, Right, BottomRight }
+    private ResizeEdge _resizeEdge = ResizeEdge.None;
 
     // ─── אירועים ─────────────────────────────────────────────
     public event Action<BookPanel>? CloseRequested;
@@ -205,27 +208,116 @@ public sealed partial class BookPanel : UserControl
     }
 
     // ─── Resize ──────────────────────────────────────────────
+    private void TopEdge_PointerPressed(object s, PointerRoutedEventArgs e)
+    {
+        _isResizing = true;
+        _resizeEdge = ResizeEdge.Top;
+        _resizeStart = e.GetCurrentPoint(Parent as UIElement).Position;
+        _resizeStartSize = _panelSize;
+        _positionStart = _position;
+        ((UIElement)s).CapturePointer(e.Pointer);
+    }
+
+    private void TopEdge_PointerMoved(object s, PointerRoutedEventArgs e)
+    {
+        if (!_isResizing || _resizeEdge != ResizeEdge.Top) return;
+        var pt = e.GetCurrentPoint(Parent as UIElement).Position;
+        var deltaY = pt.Y - _resizeStart.Y;
+        var newH = Math.Max(MinHeight, _resizeStartSize.Height - deltaY);
+        _panelSize = new Size(_panelSize.Width, newH);
+        _position = new Point(_positionStart.X, _positionStart.Y + (_resizeStartSize.Height - newH));
+        ApplyPosition();
+        ApplySize();
+    }
+
+    private void BottomEdge_PointerPressed(object s, PointerRoutedEventArgs e)
+    {
+        _isResizing = true;
+        _resizeEdge = ResizeEdge.Bottom;
+        _resizeStart = e.GetCurrentPoint(Parent as UIElement).Position;
+        _resizeStartSize = _panelSize;
+        ((UIElement)s).CapturePointer(e.Pointer);
+    }
+
+    private void BottomEdge_PointerMoved(object s, PointerRoutedEventArgs e)
+    {
+        if (!_isResizing || _resizeEdge != ResizeEdge.Bottom) return;
+        var pt = e.GetCurrentPoint(Parent as UIElement).Position;
+        var newH = Math.Max(MinHeight, _resizeStartSize.Height + (pt.Y - _resizeStart.Y));
+        _panelSize = new Size(_panelSize.Width, newH);
+        ApplySize();
+    }
+
+    private void LeftEdge_PointerPressed(object s, PointerRoutedEventArgs e)
+    {
+        _isResizing = true;
+        _resizeEdge = ResizeEdge.Left;
+        _resizeStart = e.GetCurrentPoint(Parent as UIElement).Position;
+        _resizeStartSize = _panelSize;
+        _positionStart = _position;
+        ((UIElement)s).CapturePointer(e.Pointer);
+    }
+
+    private void LeftEdge_PointerMoved(object s, PointerRoutedEventArgs e)
+    {
+        if (!_isResizing || _resizeEdge != ResizeEdge.Left) return;
+        var pt = e.GetCurrentPoint(Parent as UIElement).Position;
+        var deltaX = pt.X - _resizeStart.X;
+        var newW = Math.Max(MinWidth, _resizeStartSize.Width - deltaX);
+        _panelSize = new Size(newW, _panelSize.Height);
+        _position = new Point(_positionStart.X + (_resizeStartSize.Width - newW), _positionStart.Y);
+        ApplyPosition();
+        ApplySize();
+    }
+
+    private void RightEdge_PointerPressed(object s, PointerRoutedEventArgs e)
+    {
+        _isResizing = true;
+        _resizeEdge = ResizeEdge.Right;
+        _resizeStart = e.GetCurrentPoint(Parent as UIElement).Position;
+        _resizeStartSize = _panelSize;
+        ((UIElement)s).CapturePointer(e.Pointer);
+    }
+
+    private void RightEdge_PointerMoved(object s, PointerRoutedEventArgs e)
+    {
+        if (!_isResizing || _resizeEdge != ResizeEdge.Right) return;
+        var pt = e.GetCurrentPoint(Parent as UIElement).Position;
+        var newW = Math.Max(MinWidth, _resizeStartSize.Width + (pt.X - _resizeStart.X));
+        _panelSize = new Size(newW, _panelSize.Height);
+        ApplySize();
+    }
+
     private void ResizeHandle_PointerPressed(object s, PointerRoutedEventArgs e)
     {
-        _isResizing      = true;
-        _resizeStart     = e.GetCurrentPoint(Parent as UIElement).Position;
-        _resizeStartSize = new Size(ActualWidth, ActualHeight);
+        _isResizing = true;
+        _resizeEdge = ResizeEdge.BottomRight;
+        _resizeStart = e.GetCurrentPoint(Parent as UIElement).Position;
+        _resizeStartSize = _panelSize;
         ((UIElement)s).CapturePointer(e.Pointer);
     }
 
     private void ResizeHandle_PointerMoved(object s, PointerRoutedEventArgs e)
     {
-        if (!_isResizing) return;
-        var pt   = e.GetCurrentPoint(Parent as UIElement).Position;
-        var newW = Math.Max(MinWidth,  _resizeStartSize.Width  + (pt.X - _resizeStart.X));
+        if (!_isResizing || _resizeEdge != ResizeEdge.BottomRight) return;
+        var pt = e.GetCurrentPoint(Parent as UIElement).Position;
+        var newW = Math.Max(MinWidth, _resizeStartSize.Width + (pt.X - _resizeStart.X));
         var newH = Math.Max(MinHeight, _resizeStartSize.Height + (pt.Y - _resizeStart.Y));
         _panelSize = new Size(newW, newH);
         ApplySize();
     }
 
+    private void Edge_PointerReleased(object s, PointerRoutedEventArgs e)
+    {
+        _isResizing = false;
+        _resizeEdge = ResizeEdge.None;
+        ((UIElement)s).ReleasePointerCapture(e.Pointer);
+    }
+
     private void ResizeHandle_PointerReleased(object s, PointerRoutedEventArgs e)
     {
         _isResizing = false;
+        _resizeEdge = ResizeEdge.None;
         ((UIElement)s).ReleasePointerCapture(e.Pointer);
     }
 

@@ -9,10 +9,10 @@
     mc:Ignorable="d"
     Title="אוצרות — ספרי קודש">
 
-    <Grid x:Name="RootGrid" RowDefinitions="Auto,*,Auto">
+    <Grid x:Name="RootGrid" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
 
         <!-- ══ שורה עליונה: תפריט + חיפוש + הגדרות ══ -->
-        <Border Grid.Row="0"
+        <Border Grid.Row="0" Grid.Column="0"
                 Background="{ThemeResource NavigationViewTopPaneBackground}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="0,0,0,1">
@@ -96,7 +96,7 @@
         </Border>
 
         <!-- ══ אזור ספרים ══ -->
-        <Grid Grid.Row="1" x:Name="BooksArea">
+        <Grid Grid.Row="1" Grid.Column="0" x:Name="BooksArea">
 
             <!-- מסך ברוך הבא -->
             <StackPanel x:Name="WelcomePanel"
@@ -123,20 +123,55 @@
             <controls:BookCanvasPanel x:Name="BookCanvas"/>
         </Grid>
 
+        <!-- ══ פאנל הגדרות צד (ימין) ══ -->
+        <Border Grid.Row="1" Grid.Column="1"
+                x:Name="SettingsPanel"
+                Width="380"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1,0,0,0"
+                Visibility="Collapsed">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Grid.Row="0" Padding="12,8" ColumnDefinitions="*,Auto"
+                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="0,0,0,1">
+                    <TextBlock Grid.Column="0" Text="הגדרות"
+                               FontSize="18" FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Width="32" Height="32" Padding="0"
+                            Click="CloseSettings_Click"
+                            ToolTipService.ToolTip="סגור">
+                        <FontIcon Glyph="&#xE711;" FontSize="12"/>
+                    </Button>
+                </Grid>
+                <ScrollViewer Grid.Row="1" x:Name="SettingsScrollViewer">
+                    <!-- התוכן ייטען כאן -->
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
         <!-- ══ שורת סטטוס תחתונה ══ -->
-        <Border Grid.Row="2"
+        <Border Grid.Row="2" Grid.ColumnSpan="2"
                 Background="{ThemeResource NavigationViewTopPaneBackground}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="0,1,0,0"
                 Padding="12,3">
-            <Grid ColumnDefinitions="*,Auto">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <!-- שורת משימות חלונות -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4"
+                            x:Name="TaskBarStack" FlowDirection="RightToLeft"/>
+                
                 <TextBlock x:Name="StatusText"
-                           Grid.Column="0"
+                           Grid.Column="1"
                            FontSize="12"
                            VerticalAlignment="Center"
+                           Margin="0,0,16,0"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 <TextBlock x:Name="ServerStatusText"
-                           Grid.Column="1"
+                           Grid.Column="2"
                            FontSize="12"
                            VerticalAlignment="Center"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
