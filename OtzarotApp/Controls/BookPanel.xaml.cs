@@ -339,6 +339,19 @@ public sealed partial class BookPanel : UserControl
         ((UIElement)s).ReleasePointerCapture(e.Pointer);
     }
 
+    // ─── cursors לגבולות resize ───────────────────────────────
+    private void TopBottomEdge_PointerEntered(object s, PointerRoutedEventArgs e)
+        => ((UIElement)s).ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthSouth));
+
+    private void LeftRightEdge_PointerEntered(object s, PointerRoutedEventArgs e)
+        => ((UIElement)s).ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast));
+
+    private void ResizeHandle_PointerEntered(object s, PointerRoutedEventArgs e)
+        => ((UIElement)s).ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeNorthwestSoutheast));
+
+    private void Edge_PointerExited(object s, PointerRoutedEventArgs e)
+        => ((UIElement)s).ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.Arrow));
+
     // ─── עזרי מיקום ─────────────────────────────────────────
     private void ApplyPosition()
     {
